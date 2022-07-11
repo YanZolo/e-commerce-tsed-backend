@@ -3,5 +3,6 @@
  */
 
 export * from "./auth/AuthController";
+export * from "./orders/OrdersController";
 export * from "./products/ProductController";
 export * from "./users/UsersController";
