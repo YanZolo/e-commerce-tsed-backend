@@ -1,4 +1,4 @@
-import { Model, ObjectID, Trim, Unique } from "@tsed/mongoose";
+import { Model, ObjectID, Trim } from "@tsed/mongoose";
 import { CollectionOf, Default, Example, Format, Groups, MaxItems, MaxLength, MinLength, Required } from "@tsed/schema";
 
 export class ReviewModel {
@@ -35,7 +35,6 @@ export class ProductsModel {
 
   @Required()
   @Trim()
-  @Unique()
   @Example("nike-slim-shirt")
   slug: string;
 

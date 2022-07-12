@@ -1,6 +1,7 @@
-import { Model, ObjectID, Ref, Trim, Unique } from "@tsed/mongoose";
-import { Default, Description, Example, Format, Groups, Property, Required } from "@tsed/schema";
+import { Model, Ref, Trim } from "@tsed/mongoose";
+import { Default, Example, Groups, Property, Required } from "@tsed/schema";
 import { ProductsModel } from "../products/ProductsModel";
+import { OrdersCreationModel } from "./OrdersCreationModel";
 /**
  * ## How to inject model?
  *
@@ -19,7 +20,6 @@ import { ProductsModel } from "../products/ProductsModel";
 export class OrderItems {
   @Required()
   @Trim()
-  @Unique()
   @Example("nike-slim-shirt")
   slug: string;
 
@@ -39,9 +39,8 @@ export class OrderItems {
   price: number;
 
   @Ref(ProductsModel)
-  @Description("product ID")
-  @Required()
-  productId: Ref<ProductsModel>;
+  @Groups("creation")
+  product: Ref<ProductsModel>;
 }
 
 export class ShippingAddress {
@@ -78,50 +77,23 @@ export class PaymentResult {
 @Model({
   name: "orders"
 })
-export class OrdersModel {
-  @ObjectID("id")
-  @Groups("!creation")
-  _id: string;
-
-  @Required()
-  orderItems: OrderItems[];
-
-  @Required()
-  shippingAddress: ShippingAddress;
-
-  @Required()
-  paymentMethod: string;
+export class OrdersModel extends OrdersCreationModel {
 
   @Property()
-  paymentResult: PaymentResult;
-
-  @Required()
-  itemsPrice: number;
-
-  @Required()
-  shippingPrice: number;
-
-  @Required()
-  taxPrice: number;
-
-  @Required()
-  totalPrice: number;
+  paymentResult?: PaymentResult;
 
   @Property()
   @Default(false)
-  isPaid: boolean;
+  isPaid?: boolean;
 
   @Property()
-  paidAt: Date;
+  paidAt?: Date;
 
   @Property()
   @Default(false)
-  isDelivered: boolean;
+  isDelivered?: boolean;
 
   @Property()
-  deliveredAt: Date;
-
-  @Format("date-time")
-  @Default(Date.now())
-  dateCreation: number = Date.now();
+  deliveredAt?: Date;
+ 
 }

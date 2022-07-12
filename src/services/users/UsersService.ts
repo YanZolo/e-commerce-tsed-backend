@@ -51,18 +51,4 @@ export class UsersService extends MongooseRepository<UserModel> {
       secretOrKey
     );
   }
-
-  // async login(access_token: string, user: UserModel) {
-  //   if (user) {
-  //     return {
-  //       _id: user._id,
-  //       username: user.username,
-  //       email: user.email,
-  //       isAdmin: user.isAdmin,
-  //       createdAt: user.dateCreation,
-  //       token: access_token
-  //     };
-  //   }
-  //   throw new NotFound("User not Found");
-  // }
 }
