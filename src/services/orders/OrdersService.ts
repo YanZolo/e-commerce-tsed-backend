@@ -1,7 +1,6 @@
 import { Inject, Injectable } from "@tsed/di";
 import { MongooseModel } from "@tsed/mongoose";
-import { OrdersCreationModel } from "src/models/orders/OrdersCreationModel";
-import { OrderItems, ShippingAddress } from "src/models/orders/OrdersModel";
+import { OrderItems, OrdersModel, ShippingAddress } from "src/models/orders/OrdersModel";
 import { UserModel } from "src/models/users/UserModel";
 
 import { MongooseRepository } from "../mongoose/MongooseRepository";
@@ -21,40 +20,39 @@ export type Item = {
   numReviews: number;
   reviews: string[] | [];
   dateCreation: number;
-  quantity: number
-}
+  quantity: number;
+};
 export type PayloadCreation = {
-  orderItems : Item[];
+  orderItems: Item[];
   shippingAddress: ShippingAddress;
   paymentMethod: string;
   shippingPrice: number;
   taxPrice: number;
   itemsPrice: number;
   totalPrice: number;
-}
+};
 @Injectable()
-export class OrdersService extends MongooseRepository<OrdersCreationModel> {
-  @Inject(OrdersCreationModel)
-  protected model: MongooseModel<OrdersCreationModel>;
+export class OrdersService extends MongooseRepository<OrdersModel> {
+  @Inject(OrdersModel)
+  protected model: MongooseModel<OrdersModel>;
 
-  async createOrder(payload: PayloadCreation, user:UserModel) {
+  async createOrder(payload: PayloadCreation, user: UserModel) {
     console.log("payload ===>", payload);
 
-    
-    const orderItems : OrderItems[] = payload.orderItems.map((item : Item) => {
+    const orderItems: OrderItems[] = payload.orderItems.map((item: Item) => {
       return {
         slug: item.slug,
         name: item.name,
         quantity: item.quantity,
         image: item.image,
         price: item.price,
-        product: item.id,
+        product: item.id
       };
     });
 
-    const { shippingAddress, paymentMethod, itemsPrice, shippingPrice, taxPrice, totalPrice } = payload; 
+    const { shippingAddress, paymentMethod, itemsPrice, shippingPrice, taxPrice, totalPrice } = payload;
 
-    const order : OrdersCreationModel  = {
+    const order: OrdersModel = {
       orderItems,
       shippingAddress,
       paymentMethod,
@@ -62,11 +60,14 @@ export class OrdersService extends MongooseRepository<OrdersCreationModel> {
       shippingPrice,
       taxPrice,
       totalPrice,
-      userId: user._id
+      userId: user._id,
+      isPaid: false,
+      isDelivered: false,
+      dateCreation: Date.now()
     };
 
-    console.log('order === >', order)
-    
+    console.log("order === >", order);
+
     return this.save(order);
   }
 }
