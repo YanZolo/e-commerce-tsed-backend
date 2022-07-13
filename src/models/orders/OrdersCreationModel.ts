@@ -52,5 +52,5 @@ export class OrdersCreationModel {
 
   @Format("date-time")
   @Default(Date.now())
-  dateCreation: number = Date.now();
+  dateCreation?: number = Date.now();
 }

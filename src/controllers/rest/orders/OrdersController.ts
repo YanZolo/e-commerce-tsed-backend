@@ -5,7 +5,8 @@ import { BodyParams, Context, PathParams } from "@tsed/platform-params";
 import { Get, Groups, Name, Post, Required, Returns, Security, Summary } from "@tsed/schema";
 import { OrdersModel } from "src/models/orders/OrdersModel";
 import { UserModel } from "src/models/users/UserModel";
-import { OrdersService } from "src/services/orders/OrdersService";
+import { OrdersService, PayloadCreation } from "src/services/orders/OrdersService";
+
 
 @Controller("/order")
 @Authorize("jwt")
@@ -33,7 +34,7 @@ export class OrdersController {
   @Summary("create a new order")
   @Returns(201, OrdersModel)
   @Returns(400)
-  async post(@Context() $ctx: Context, @Required() @BodyParams() @Groups("creation") payload: any) {
+  async post(@Context() $ctx: Context, @Required() @BodyParams() @Groups("creation") payload: PayloadCreation) {
     const user: UserModel = $ctx.get("user");
     return this.ordersService.createOrder(payload, user);
   }

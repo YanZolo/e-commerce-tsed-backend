@@ -1,12 +1,12 @@
 import { Inject, Injectable } from "@tsed/di";
 import { MongooseModel } from "@tsed/mongoose";
 import { OrdersCreationModel } from "src/models/orders/OrdersCreationModel";
-import { OrderItems } from "src/models/orders/OrdersModel";
+import { OrderItems, ShippingAddress } from "src/models/orders/OrdersModel";
 import { UserModel } from "src/models/users/UserModel";
 
 import { MongooseRepository } from "../mongoose/MongooseRepository";
 
-interface Item {
+export type Item = {
   id: string;
   name: string;
   slug: string;
@@ -23,12 +23,21 @@ interface Item {
   dateCreation: number;
   quantity: number
 }
+export type PayloadCreation = {
+  orderItems : Item[];
+  shippingAddress: ShippingAddress;
+  paymentMethod: string;
+  shippingPrice: number;
+  taxPrice: number;
+  itemsPrice: number;
+  totalPrice: number;
+}
 @Injectable()
 export class OrdersService extends MongooseRepository<OrdersCreationModel> {
   @Inject(OrdersCreationModel)
   protected model: MongooseModel<OrdersCreationModel>;
 
-  async createOrder(payload:any, user:UserModel) {
+  async createOrder(payload: PayloadCreation, user:UserModel) {
     console.log("payload ===>", payload);
 
     
@@ -43,7 +52,7 @@ export class OrdersService extends MongooseRepository<OrdersCreationModel> {
       };
     });
 
-    const { shippingAddress, paymentMethod, itemsPrice, shippingPrice, taxPrice, totalPrice, dateCreation } = payload; 
+    const { shippingAddress, paymentMethod, itemsPrice, shippingPrice, taxPrice, totalPrice } = payload; 
 
     const order : OrdersCreationModel  = {
       orderItems,
@@ -53,8 +62,7 @@ export class OrdersService extends MongooseRepository<OrdersCreationModel> {
       shippingPrice,
       taxPrice,
       totalPrice,
-      userId: user._id,
-      dateCreation
+      userId: user._id
     };
 
     console.log('order === >', order)
