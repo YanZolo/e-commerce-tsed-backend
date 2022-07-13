@@ -1,4 +1,4 @@
-import { ObjectID, Ref } from "@tsed/mongoose";
+import { Model, ObjectID, Ref } from "@tsed/mongoose";
 import { Default, Format, Groups, Required } from "@tsed/schema";
 import { UserModel } from "../users/UserModel";
 import { OrderItems, ShippingAddress } from "./OrdersModel";
@@ -16,6 +16,10 @@ import { OrderItems, ShippingAddress } from "./OrdersModel";
  * }
  * ```
  */
+
+ @Model({
+  name: "orders"
+})
 export class OrdersCreationModel {
   @ObjectID("id")
   @Groups("!creation")
