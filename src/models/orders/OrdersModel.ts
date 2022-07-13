@@ -1,21 +1,8 @@
-import { Model, Ref, Trim } from "@tsed/mongoose";
-import { Default, Example, Groups, Property, Required } from "@tsed/schema";
+import { Model, ObjectID, Ref, Trim } from "@tsed/mongoose";
+import { Default, Example, Format, Groups, Property, Required } from "@tsed/schema";
 import { ProductsModel } from "../products/ProductsModel";
-import { OrdersCreationModel } from "./OrdersCreationModel";
-/**
- * ## How to inject model?
- *
- * ```typescript
- * import { MongooseModel } from "@tsed/mongoose";
- * import { Injectable, Inject } from "@tsed/di";
- *
- * @Injectable()
- * class MyService {
- *   @Inject(orders)
- *   model: MongooseModel<orders>;
- * }
- * ```
- */
+import { UserModel } from "../users/UserModel";
+
 
 export class OrderItems {
   @Required()
@@ -61,39 +48,86 @@ export class ShippingAddress {
 }
 
 export class PaymentResult {
-  @Required()
+  @Property()
   id: string;
 
-  @Required()
+  @Property()
   status: string;
 
-  @Required()
+  @Property()
   update_time: string;
 
-  @Required()
+  @Property()
   email_address: string;
 }
 
 @Model({
   name: "orders"
 })
-export class OrdersModel extends OrdersCreationModel {
+export class OrdersModel {
+  @ObjectID("id")
+  @Groups("!creation")
+  _id?: string;
+
+  @Required()
+  orderItems: OrderItems[];
+
+  @Required()
+  shippingAddress: ShippingAddress;
+
+  @Required()
+  paymentMethod: string;
+
+  @Required()
+  itemsPrice: number;
+
+  @Required()
+  shippingPrice: number;
+
+  @Required()
+  taxPrice: number;
+
+  @Required()
+  totalPrice: number;
+
+  @Ref(UserModel)
+  @Groups("creation")
+  userId: Ref<UserModel>;
 
   @Property()
   paymentResult?: PaymentResult;
 
   @Property()
   @Default(false)
-  isPaid?: boolean;
+  isPaid: boolean = false;
 
   @Property()
   paidAt?: Date;
 
   @Property()
   @Default(false)
-  isDelivered?: boolean;
+  isDelivered: boolean = false;
 
   @Property()
   deliveredAt?: Date;
- 
+
+  @Format("date-time")
+  @Default(Date.now())
+  dateCreation: number = Date.now();
 }
+
+
+/**
+ * ## How to inject model?
+ *
+ * ```typescript
+ * import { MongooseModel } from "@tsed/mongoose";
+ * import { Injectable, Inject } from "@tsed/di";
+ *
+ * @Injectable()
+ * class MyService {
+ *   @Inject(orders)
+ *   model: MongooseModel<orders>;
+ * }
+ * ```
+ */
