@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@tsed/di";
 import { MongooseModel } from "@tsed/mongoose";
-import { OrderItems, OrdersModel, ShippingAddress } from "src/models/orders/OrdersModel";
+import { OrderModel, ShippingAddress } from "src/models/orders/OrderModel";
 import { UserModel } from "src/models/users/UserModel";
 
 import { MongooseRepository } from "../mongoose/MongooseRepository";
@@ -32,14 +32,12 @@ export type PayloadCreation = {
   totalPrice: number;
 };
 @Injectable()
-export class OrdersService extends MongooseRepository<OrdersModel> {
-  @Inject(OrdersModel)
-  protected model: MongooseModel<OrdersModel>;
+export class OrdersService extends MongooseRepository<OrderModel> {
+  @Inject(OrderModel)
+  protected model: MongooseModel<OrderModel>;
 
-  async createOrder(payload: PayloadCreation, user: UserModel) {
-    console.log("payload ===>", payload);
-
-    const orderItems: OrderItems[] = payload.orderItems.map((item: Item) => {
+  async createOrder(payload: OrderModel, user: UserModel) {
+    const orderItems = payload.orderItems.map((item) => {
       return {
         slug: item.slug,
         name: item.name,
@@ -49,10 +47,11 @@ export class OrdersService extends MongooseRepository<OrdersModel> {
         product: item.id
       };
     });
+    console.log('orderItems ===> ', orderItems)
 
     const { shippingAddress, paymentMethod, itemsPrice, shippingPrice, taxPrice, totalPrice } = payload;
 
-    const order: OrdersModel = {
+    return this.save({
       orderItems,
       shippingAddress,
       paymentMethod,
@@ -60,14 +59,7 @@ export class OrdersService extends MongooseRepository<OrdersModel> {
       shippingPrice,
       taxPrice,
       totalPrice,
-      userId: user._id,
-      isPaid: false,
-      isDelivered: false,
-      dateCreation: Date.now()
-    };
-
-    console.log("order === >", order);
-
-    return this.save(order);
+      userId: user._id
+    } as OrderModel);
   }
 }

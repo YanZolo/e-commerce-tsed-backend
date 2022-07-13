@@ -1,10 +1,13 @@
-import { Model, ObjectID, Ref, Trim } from "@tsed/mongoose";
-import { Default, Example, Format, Groups, Property, Required } from "@tsed/schema";
-import { ProductsModel } from "../products/ProductsModel";
-import { UserModel } from "../users/UserModel";
-
+import { Model, ObjectID, Trim } from "@tsed/mongoose";
+import { Default, Example, Format, Groups, Required } from "@tsed/schema";
 
 export class OrderItems {
+
+
+  @Required()
+  @ObjectID()
+  id: string;
+
   @Required()
   @Trim()
   @Example("nike-slim-shirt")
@@ -25,9 +28,10 @@ export class OrderItems {
   @Required()
   price: number;
 
-  @Ref(ProductsModel)
-  @Groups("creation")
-  product: Ref<ProductsModel>;
+  @ObjectID()
+  @Groups("!creation")
+  @Required()
+  product: string;
 }
 
 export class ShippingAddress {
@@ -48,26 +52,26 @@ export class ShippingAddress {
 }
 
 export class PaymentResult {
-  @Property()
+  @Required()
   id: string;
 
-  @Property()
+  @Required()
   status: string;
 
-  @Property()
+  @Required()
   update_time: string;
 
-  @Property()
+  @Required()
   email_address: string;
 }
 
 @Model({
   name: "orders"
 })
-export class OrdersModel {
+export class OrderModel {
   @ObjectID("id")
   @Groups("!creation")
-  _id?: string;
+  _id: string;
 
   @Required()
   orderItems: OrderItems[];
@@ -90,32 +94,40 @@ export class OrdersModel {
   @Required()
   totalPrice: number;
 
-  @Ref(UserModel)
-  @Groups("creation")
-  userId: Ref<UserModel>;
+  @ObjectID()  
+  @Groups("!creation")
+  @Required()
+  userId: string;
 
-  @Property()
-  paymentResult?: PaymentResult;
+  @Required()
+  @Groups("!creation")
+  @Default({})
+  paymentResult: PaymentResult;
 
-  @Property()
+  @Required()
+  @Groups("!creation")
+  paidAt: string;
+
+  @Required()
   @Default(false)
+  @Groups("!creation")
   isPaid: boolean = false;
 
-  @Property()
-  paidAt?: Date;
-
-  @Property()
+  @Required()
   @Default(false)
+  @Groups("!creation")
   isDelivered: boolean = false;
 
-  @Property()
-  deliveredAt?: Date;
-
+  @Required()
   @Format("date-time")
+  @Groups("!creation") // rajouter une valuer par défault ?
+  deliveredAt: string;
+
+  @Required()
   @Default(Date.now())
+  @Groups("!creation")
   dateCreation: number = Date.now();
 }
-
 
 /**
  * ## How to inject model?

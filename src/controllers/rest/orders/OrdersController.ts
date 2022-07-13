@@ -3,9 +3,9 @@ import { ObjectID } from "@tsed/mongoose";
 import { Authorize } from "@tsed/passport";
 import { BodyParams, Context, PathParams } from "@tsed/platform-params";
 import { Get, Groups, Name, Post, Required, Returns, Security, Summary } from "@tsed/schema";
-import { OrdersModel } from "src/models/orders/OrdersModel";
+import { OrderModel } from "src/models/orders/OrderModel";
 import { UserModel } from "src/models/users/UserModel";
-import { OrdersService, PayloadCreation } from "src/services/orders/OrdersService";
+import { OrdersService } from "src/services/orders/OrdersService";
 
 
 @Controller("/order")
@@ -18,13 +18,13 @@ export class OrdersController {
 
   @Get("/")
   @Summary("get all orders")
-  @Returns(200, Array).Of(OrdersModel)
+  @Returns(200, Array).Of(OrderModel)
   async list() {
     return this.ordersService.getAll();
   }
   @Get("/:id")
   @Summary("get order by id")
-  @Returns(200, OrdersModel)
+  @Returns(200, OrderModel)
   @Returns(400)
   async get(@Required() @PathParams("id") @ObjectID() id: string) {
     return this.ordersService.getById(id);
@@ -32,9 +32,9 @@ export class OrdersController {
 
   @Post("/")
   @Summary("create a new order")
-  @Returns(201, OrdersModel)
+  @Returns(201, OrderModel)
   @Returns(400)
-  async post(@Context() $ctx: Context, @Required() @BodyParams() @Groups("creation") payload: PayloadCreation) {
+  async post(@Context() $ctx: Context, @Required() @BodyParams() @Groups("creation") payload: OrderModel) {
     const user: UserModel = $ctx.get("user");
     return this.ordersService.createOrder(payload, user);
   }
