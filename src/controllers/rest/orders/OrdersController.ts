@@ -7,7 +7,6 @@ import { OrderModel } from "src/models/orders/OrderModel";
 import { UserModel } from "src/models/users/UserModel";
 import { OrdersService } from "src/services/orders/OrdersService";
 
-
 @Controller("/order")
 @Authorize("jwt")
 @Security("jwt")
@@ -30,7 +29,19 @@ export class OrdersController {
     return this.ordersService.getById(id);
   }
 
-  @Post("/")
+  @Post("/cost")
+  @Summary("get items infos for calculate prices and return it")
+  @Returns(201)
+  @Returns(400)
+  async getInfos(
+    @Required()
+    @BodyParams()
+    @Groups("PricesInfos")
+    payload: OrderModel
+  ) {
+    return this.ordersService.manageOrderCost(payload);
+  }
+  @Post("/purchase")
   @Summary("create a new order")
   @Returns(201, OrderModel)
   @Returns(400)
