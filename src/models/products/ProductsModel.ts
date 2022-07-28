@@ -30,13 +30,24 @@ export class ProductsModel {
 
   @Required()
   @Trim()
-  @Example("Nike Slim Shirt")
-  name: string;
+  @Example("Nike")
+  brand: string;
 
   @Required()
   @Trim()
-  @Example("nike-slim-shirt")
-  slug: string;
+  @Example("Shirts")
+  category: string;
+
+  @Required()
+  countInStock: number;
+
+  @Format("date-time")
+  @Default(Date.now())
+  dateCreation: number = Date.now();
+
+  @Trim()
+  @Example("high quality product")
+  description: string;
 
   @Required()
   @Example("/images/nike/shirts/p1.jpg")
@@ -48,38 +59,30 @@ export class ProductsModel {
 
   @Required()
   @Trim()
-  @Example("Nike")
-  brand: string;
+  @Example("Nike Slim Shirt")
+  name: string;
 
   @Required()
-  @Trim()
-  @Example("Shirts")
-  category: string;
-
-  @Trim()
-  @Example("high quality product")
-  description: string;
+  numReviews: number;
 
   @Required()
   price: number;
 
   @Required()
-  countInStock: number;
+  quantity: number;
 
   @Required()
   rating: number;
-
-  @Required()
-  numReviews: number;
 
   @CollectionOf(ReviewModel)
   @MaxItems(20)
   @Groups("!creation")
   reviews?: ReviewModel[] = [];
 
-  @Format("date-time")
-  @Default(Date.now())
-  dateCreation: number = Date.now();
+  @Required()
+  @Trim()
+  @Example("nike-slim-shirt")
+  slug: string;
 }
 
 /**
